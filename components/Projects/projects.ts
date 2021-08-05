@@ -1,5 +1,5 @@
-import amation from "../../../public/img/projects/amation_1.png";
-import est from "../../../public/img/projects/est.png";
+import amation from "../../public/img/projects/amation_1.png";
+import est from "../../public/img/projects/est.png";
 
 export type TProject = {
   title: string;

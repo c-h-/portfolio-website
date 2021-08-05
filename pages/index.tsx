@@ -5,10 +5,10 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import styled from "styled-components";
 
-import Globe from "./components/Globe";
-import Header from "./components/Header";
-import Projects from "./components/Projects";
-import { persistor, store } from "./state/store";
+import Globe from "../components/Globe";
+import Header from "../components/Header";
+import Projects from "../components/Projects";
+import { persistor, store } from "../state/store";
 
 const Wrapper = styled.div`
   display: flex;

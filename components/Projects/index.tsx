@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import styled from "styled-components";
 
+import loader from "../../utils/img-loader";
 import StyledCard from "../Card";
 import Drawer from "./Drawer";
 import projects from "./projects";
@@ -114,6 +115,8 @@ const Projects = () => {
                       <Image
                         src={project.feature.imgSrc}
                         alt={project.feature.alt}
+                        loader={loader}
+                        unoptimized
                       />
                     )}
                   <Text tagName="h3" ellipsize>

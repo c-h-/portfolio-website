@@ -7,6 +7,7 @@ import {
 import Image from "next/image";
 import styled from "styled-components";
 
+import loader from "../../utils/img-loader";
 import { TProject } from "./projects";
 
 const StyledDrawer = styled(BlueprintDrawer)`
@@ -54,6 +55,8 @@ const Drawer = ({ setSelectedProjectTitle, currentProject }: TDrawerProps) => {
           <Image
             src={currentProject?.feature.imgSrc}
             alt={currentProject?.feature.alt}
+            loader={loader}
+            unoptimized
           />
         )}
       <StyledCard elevation={2}>

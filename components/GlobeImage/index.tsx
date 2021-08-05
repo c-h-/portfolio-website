@@ -1,6 +1,7 @@
 import Image from "next/image";
 import styled from "styled-components";
 
+import loader from "../../utils/img-loader";
 import { TImage } from "./images";
 
 interface IStyledContaner {
@@ -77,6 +78,8 @@ export default function GlobeImage({ imageSet, viewState }: TGlobeImageProps) {
           objectFit="cover"
           width={200}
           height={200}
+          loader={loader}
+          unoptimized
         />
       ))}
     </StyledContainer>
