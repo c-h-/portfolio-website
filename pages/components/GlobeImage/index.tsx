@@ -5,13 +5,23 @@ import { TImage } from "./images";
 
 interface IStyledContaner {
   show: boolean;
+  zoom: number;
+  position?: "left" | "right";
 }
 
-const StyledContainer = styled.div<IStyledContaner>`
+const StyledContainer = styled.a<IStyledContaner>`
+  display: block;
+  position: relative;
+  z-index: 10000;
   background-color: white;
   padding: 0.3rem;
-  transition: transform ease-in-out 200ms;
-  transform: scale(${(props) => (props.show ? 1 : 0)});
+  padding-bottom: 1rem;
+  transition: transform ease-in-out 50ms;
+  transform-origin: top left;
+  transform: scale(${(props) => (props.show ? props.zoom : 0)})
+    translate(${(props) => (props.position === "left" ? "-100%" : "0")}, 0);
+
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
 `;
 
 type TGlobeImageProps = {
@@ -36,9 +46,6 @@ export default function GlobeImage({ imageSet, viewState }: TGlobeImageProps) {
   const lat = viewState?.latitude || 0;
   const lon = viewState?.longitude || 0;
 
-  // set the image dimension to max 160 and smaller when zoomed out
-  const width = Math.min(160, (viewState?.zoom || 0) * 50);
-
   const latMinBound = (lat - 45) % 180;
   const latMaxBound = (lat + 45) % 180;
   const lonMinBound = (lon - 90) % 360;
@@ -49,17 +56,27 @@ export default function GlobeImage({ imageSet, viewState }: TGlobeImageProps) {
   const latInViewport = imgLat > latMinBound && imgLat < latMaxBound;
   const lonInViewport = imgLon > lonMinBound && imgLon < lonMaxBound;
 
+  const zoom = Math.min(1, (viewState?.zoom || 0) / 5);
+
   // only show images when viewport is loaded and lat/lon in current view
   const showImage = (viewState && latInViewport && lonInViewport) as boolean;
   return (
-    <StyledContainer show={showImage}>
+    <StyledContainer
+      show={showImage}
+      zoom={zoom}
+      href={imageSet.url}
+      position={imageSet.position}
+      target="_blank"
+      rel="noreferrer"
+    >
       {imageSet.imgs.map((image) => (
         <Image
           key={image.alt}
           src={image.src}
           alt={image.alt}
-          width={width}
-          height={width}
+          objectFit="cover"
+          width={200}
+          height={200}
         />
       ))}
     </StyledContainer>

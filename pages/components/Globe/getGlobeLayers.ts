@@ -10,6 +10,7 @@ export default function getGlobeLayers() {
     new SimpleMeshLayer({
       id: "earth-sphere",
       data: [0],
+      // @ts-ignore
       mesh: new SphereGeometry({
         radius: EARTH_RADIUS_METERS,
         nlat: 18,

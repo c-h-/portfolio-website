@@ -8,6 +8,7 @@ export const ipMiddleware: Middleware<{}, RootState> =
   (store) => (next) => (action) => {
     const { dispatch } = store;
     const state = store.getState();
+    // @ts-ignore
     if (!state.location.pos && isType(action, resolveLocation)) {
       fetch(
         "https://ipgeolocation.abstractapi.com/v1/?api_key=64aa99cb731c426cb0467daf0e0d2a66"

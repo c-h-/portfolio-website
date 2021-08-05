@@ -35,5 +35,6 @@ export default function BuildingsLayer() {
       "fill-extrusion-opacity": 0.6,
     },
   };
+  // @ts-ignore
   return <Layer {...layer} />;
 }

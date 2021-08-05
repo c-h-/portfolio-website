@@ -1,13 +1,18 @@
+// @ts-ignore
 import { FlyToInterpolator, _GlobeView as GlobeView } from "@deck.gl/core";
 import { HtmlOverlay, HtmlOverlayItem } from "@nebula.gl/overlays";
 import DeckGL from "deck.gl";
+import { useMemo } from "react";
 import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import { resolveLocation } from "../../state/actions";
+import { selectPos } from "../../state/selectors";
 import { useAppDispatch } from "../../state/store";
 import GlobeImage from "../GlobeImage";
 import images from "../GlobeImage/images";
+import SelfOverlay from "../SelfOverlay";
 import getArcLayer from "./getArcLayer";
 import globeLayers from "./getGlobeLayers";
 import getLights from "./getLights";
@@ -28,6 +33,7 @@ interface IGlobeWrapper {
 }
 const GlobeWrapper = styled.div<IGlobeWrapper>`
   position: absolute;
+  overflow: hidden;
   width: 100vw;
   height: 100vh;
   opacity: ${(props) => (props.loaded ? "1" : "0")};
@@ -40,12 +46,21 @@ export default function Globe() {
   const [isLoaded, setLoaded] = useState(false);
   const [liveViewState, setLiveViewState] = useState(null);
   const dispatch = useAppDispatch();
+  const userPosition = useSelector(selectPos);
+  const pos = useMemo<[lon: number, lat: number]>(
+    () => userPosition || [0, 0],
+    [userPosition]
+  );
 
   const onViewStateChange = useCallback((newState) => {
     setLiveViewState(newState.viewState);
   }, []);
 
-  const transitionIn = () =>
+  const transitionIn = () => {
+    dispatch(resolveLocation());
+    setLoaded(true);
+
+    // transition in GlobeWrapper on load
     setViewState({
       ...viewState,
       zoom: 0.8,
@@ -54,6 +69,7 @@ export default function Globe() {
       transitionDuration: 3000,
       transitionInterpolator: new FlyToInterpolator({ curve: 1 }),
     });
+  };
 
   // keep the sun's light updated
   useEffect(() => {
@@ -61,19 +77,17 @@ export default function Globe() {
     return () => clearInterval(handle);
   }, []);
 
-  // transition in GlobeWrapper
-  useEffect(() => {
-    dispatch(resolveLocation());
-    setLoaded(true);
-  }, []);
-
-  const layers = [...globeLayers(), getArcLayer(images)];
+  const layers = useMemo(
+    () => [...globeLayers(), getArcLayer(images, pos)],
+    [pos]
+  );
 
   return (
     <GlobeWrapper loaded={isLoaded}>
       <DeckGL
         initialViewState={viewState}
         views={new GlobeView({ id: "globe", controller: true, resolution: 12 })}
+        // @ts-ignore
         layers={layers}
         effects={[lighting]}
         onLoad={transitionIn}
@@ -85,6 +99,11 @@ export default function Globe() {
               <GlobeImage imageSet={imageSet} viewState={liveViewState} />
             </HtmlOverlayItem>
           ))}
+        </HtmlOverlay>
+        <HtmlOverlay>
+          <HtmlOverlayItem coordinates={pos} key="self">
+            <SelfOverlay viewState={liveViewState} pos={pos} />
+          </HtmlOverlayItem>
         </HtmlOverlay>
       </DeckGL>
     </GlobeWrapper>

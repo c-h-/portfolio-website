@@ -1,22 +1,21 @@
+import "normalize.css/normalize.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import styled from "styled-components";
 
 import Globe from "./components/Globe";
+import Header from "./components/Header";
+import Projects from "./components/Projects";
 import { persistor, store } from "./state/store";
 
-const Wrapper = styled.div``;
-
-const HeaderWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: auto;
-  margin: 6rem;
-  z-index: 1;
-`;
-const Header = styled.h1`
-  margin: 0;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100vh;
+  width: 100vw;
 `;
 
 export default function Home() {
@@ -24,14 +23,9 @@ export default function Home() {
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <Wrapper>
-          <HeaderWrapper>
-            <Header>
-              Charlie
-              <br />
-              Hulcher
-            </Header>
-          </HeaderWrapper>
+          <Header />
           <Globe />
+          <Projects />
         </Wrapper>
       </PersistGate>
     </Provider>
